@@ -5,7 +5,7 @@ namespace TreeProcessing
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main(string[] _)
         {
             // Generate the BST tree.  For which BstInsert() needs to be completed.
             var bst = Tree.Insert6Node();
@@ -124,7 +124,7 @@ namespace TreeProcessing
         public void BstInsert(int node) => BstInsert(this, node);
 
         /// <summary>
-        /// Syntax: the ? suffix to the Tree class, in the first paramter input:
+        /// Syntax: the ? suffix to the Tree class, in the first parameter input:
         /// 	BstInsert(Tree? subTree, int node)
         /// 			  ^^^^^
         /// Means that the subTree parameter may = null.  Without the ? suffix the
@@ -152,35 +152,46 @@ namespace TreeProcessing
         *     1   3
         * Will be presented as: (2 (1 E E) (3 E E))
         */
-        public override string ToString() => ToString(this);
-        
-        private static string ToString(Tree subTree)
+        public override string ToString()
         {
-            var left = subTree.Left;
-            var right = subTree.Right;
-            return $"({subTree.Node} {(left == null ? "E" : ToString(left))} {(right == null ? "E" : ToString(right))})";
+            var s = ToString(this);
+            if (s == null) throw new Exception("A programming bug in static ToString(..) routine");
+            return s;
         }
-        
+
+        private static string? ToString(Tree? subTree)
+        {
+            // Terminating condition
+            if (subTree == null)
+                return null;
+
+            // Recursive definition
+            return $"({subTree.Node} {ToString(subTree.Left)} {ToString(subTree.Right)})";
+        }
+
         /*
         * Write a routine that takes a tree and returns the tree's mirror image.
         * Whatever was left subtree becomes right subtree and visa versa.
         *
         * It is easier to flip right/left in place as opposed to returning a brand new tree.
         */
-        public Tree Mirror() => Mirror(this);
-        
-        // L R n
-        private static Tree Mirror(Tree subTree)
+        public Tree Mirror()
         {
-            if (subTree.Left == null && subTree.Right == null)
-                return subTree;
+            var m = Mirror(this);
+            if (m == null) throw new Exception("Bug in static Mirror(..) method");
+            return m;
+        }
 
-            if (subTree.Left != null)
-                _ = Mirror(subTree.Left);
+        // L R n
+        private static Tree? Mirror(Tree? subTree)
+        {
+            // Terminating condition
+            if (subTree == null)
+                return null;
 
-            if (subTree.Right != null)
-                _ = Mirror(subTree.Right);
-
+            // Recursive definition
+            _ = Mirror(subTree.Left);
+            _ = Mirror(subTree.Right);
             FlipNodesLegs(subTree);
             
             return subTree;
@@ -204,9 +215,13 @@ namespace TreeProcessing
 
         private static Tree MirrorNewTree(Tree from, Tree to)
         {
+            // Terminating condition 1
+            // From == null
             if (from == null)
                 return to;
 
+            // Terminating condition 2
+            // Left subtree == null, in which case do not duplicate it
             if (from.Left != null)
             {
                 var node = new Tree(from.Left.Node);
@@ -214,13 +229,15 @@ namespace TreeProcessing
                 _ = MirrorNewTree(from.Left, to.Right);
             }
 
+            // Terminating condition 3
+            // Right subtree == null, in which case do not duplicate it
             if (from.Right != null)
             {
                 var node = new Tree(from.Right.Node);
                 to.Left = node;
                 _ = MirrorNewTree(from.Right, to.Left);
             }
-            
+
             return to;
         }
 
@@ -298,8 +315,7 @@ namespace TreeProcessing
 
         private static void DuplicateNode(Tree tree)
         {
-            var node = new Tree(tree.Node);
-            node.Left = tree.Left;
+            var node = new Tree(tree.Node) { Left = tree.Left };
             tree.Left = node;
         }
 
@@ -355,8 +371,8 @@ namespace TreeProcessing
         {
             // Process Node
             if (subTree == null) return true;
-            if (!TraveseSubTree(subTree.Node, subTree.Left, (x, y) => x <= y)) return false;
-            if (!TraveseSubTree(subTree.Node, subTree.Right, (x, y) => x > y)) return false;
+            if (!TraverseSubTree(subTree.Node, subTree.Left, (x, y) => x <= y)) return false;
+            if (!TraverseSubTree(subTree.Node, subTree.Right, (x, y) => x > y)) return false;
 
             // Process left SubTree
             if (!IsBstInefficient(subTree.Left)) return false;
@@ -368,18 +384,18 @@ namespace TreeProcessing
         /// <summary>
         /// Process n L R
         /// </summary>
-        private static bool TraveseSubTree(int value, Tree? node, Func<int, int, bool> op)
+        private static bool TraverseSubTree(int value, Tree? node, Func<int, int, bool> op)
         {
             // Node
             if (node == null) return true;
             if (!op(node.Node, value)) return false;
 
             // Left subTree
-            var rc = TraveseSubTree(value, node.Left, op);
+            var rc = TraverseSubTree(value, node.Left, op);
             if (!rc) return false;
 
             // Right subTree
-            return TraveseSubTree(value, node.Right, op);
+            return TraverseSubTree(value, node.Right, op);
         }
 
         /// <summary>
