@@ -54,8 +54,25 @@ namespace TreeProcessing
 
     public class Tree
     {
+        /// <summary>
+        /// Left subTree
+        /// In a BST (Binary Search Tree) scenario, every node's data (in the Left subTree)
+        /// is less than or equal to the subTree's root node's data.
+        /// </summary>
         public Tree? Left { get; set; }
+
+        /// <summary>
+        /// Right subTree
+        /// In a BST (Binary Search Tree) scenario, every node's data (in the Right subTree)
+        /// is greater than the subTree's root node's data.
+        /// </summary>
         public Tree? Right { get; set; }
+
+        /// <summary>
+        /// Node's data.  In out case it is an int where less-than, equals and greater-than
+        /// are simple to assess.  Otherwise, in order to achieve a BST, we would need to
+        /// to employ at least one of the interfaces: IComparable<T> and IComparer<T>
+        /// </summary>
         public int Node { get; private set; }
 
         public Tree(int node)
@@ -410,13 +427,13 @@ namespace TreeProcessing
         /// </summary>
         public static Tree Insert6Node()
         {
-            var bst = new Tree(100);
-            bst.BstInsert(248);
-            bst.BstInsert(76);
-            bst.BstInsert(74);
-            bst.BstInsert(178);
-            bst.BstInsert(278);
-            return bst;
+            var bstRoot = new Tree(100);
+            bstRoot.BstInsert(248);
+            bstRoot.BstInsert(76);
+            bstRoot.BstInsert(74);
+            bstRoot.BstInsert(178);
+            bstRoot.BstInsert(278);
+            return bstRoot;
         }
     }
 }
