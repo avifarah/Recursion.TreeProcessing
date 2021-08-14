@@ -180,7 +180,7 @@ namespace TreeProcessing
         {
             // Terminating condition
             if (subTree == null)
-                return null;
+                return "E";
 
             // Recursive definition
             return $"({subTree.Node} {ToString(subTree.Left)} {ToString(subTree.Right)})";
@@ -226,36 +226,19 @@ namespace TreeProcessing
         */
         public Tree MirrorNewTree()
         {
-            var root = new Tree(Node);
-            return MirrorNewTree(this, root);
+            return MirrorNewTree(this);
         }
 
-        private static Tree MirrorNewTree(Tree from, Tree to)
+        private static Tree? MirrorNewTree(Tree? root)
         {
-            // Terminating condition 1
-            // From == null
-            if (from == null)
-                return to;
+            if (root == null)
+                return null;
 
-            // Terminating condition 2
-            // Left subtree == null, in which case do not duplicate it
-            if (from.Left != null)
-            {
-                var node = new Tree(from.Left.Node);
-                to.Right = node;
-                _ = MirrorNewTree(from.Left, to.Right);
-            }
-
-            // Terminating condition 3
-            // Right subtree == null, in which case do not duplicate it
-            if (from.Right != null)
-            {
-                var node = new Tree(from.Right.Node);
-                to.Left = node;
-                _ = MirrorNewTree(from.Right, to.Left);
-            }
-
-            return to;
+            var nr = new Tree(root.Node) {
+                Left = MirrorNewTree(root.Right),
+                Right = MirrorNewTree(root.Left)
+            };
+            return nr;
         }
 
         /*
